@@ -1,0 +1,824 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JERRY — Your Personal AI</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #090d1b;
+  --panel: #121a2e;
+  --panel2: #1b2742;
+  --text: #f5f7ff;
+  --muted: #929bb4;
+  --blue: #7794ff;
+  --purple: #ae87ff;
+  --border: rgba(255,255,255,.09);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+button, textarea {
+  font: inherit;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 245px;
+  background: #0e1425;
+  border-right: 1px solid var(--border);
+  padding: 25px 17px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 8px 35px;
+}
+
+.orb {
+  width: 43px;
+  height: 43px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: linear-gradient(135deg,#6593ff,#a27aff);
+  box-shadow: 0 0 25px #718aff55;
+}
+
+.brand-name {
+  font-family: 'Space Grotesk',sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.brand-tag {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-top: 3px;
+}
+
+.nav-label {
+  font-size: 10px;
+  color: #68748e;
+  letter-spacing: 2px;
+  padding: 0 12px;
+  margin: 15px 0 10px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.nav button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #aab4ce;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px;
+  border-radius: 11px;
+  cursor: pointer;
+  text-align: left;
+  transition: .2s;
+}
+
+.nav button:hover,
+.nav button.active {
+  background: #202c48;
+  color: white;
+  border-color: #8194ff22;
+}
+
+.nav-icon {
+  font-size: 18px;
+  width: 23px;
+  text-align: center;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.system-card {
+  background: linear-gradient(140deg,#192442,#191a3b);
+  border: 1px solid var(--border);
+  padding: 15px;
+  border-radius: 13px;
+  margin-bottom: 18px;
+}
+
+.system-card small {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.system-card p {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #ffbf69;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-top: 1px solid var(--border);
+  padding: 17px 5px 0;
+}
+
+.avatar {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg,#6b8cff,#ae84fa);
+  font-weight: 700;
+}
+
+.profile small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* MAIN */
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar {
+  height: 75px;
+  padding: 0 35px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar-title {
+  font-weight: 600;
+}
+
+.preview {
+  font-size: 10px;
+  padding: 8px 12px;
+  border-radius: 30px;
+  background: #292343;
+  color: #c1b3ff;
+}
+
+.new-chat {
+  color: white;
+  background: #253252;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* PAGES */
+
+.page {
+  display: none;
+  padding: 35px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.page.active {
+  display: block;
+}
+
+/* CHAT */
+
+.chat-area {
+  max-width: 790px;
+  margin: 30px auto;
+}
+
+.hero {
+  text-align: center;
+  padding: 20px 10px 35px;
+}
+
+.hero-orb {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  display: grid;
+  place-items: center;
+  font-size: 37px;
+  background: radial-gradient(circle at 35% 30%,#a4bdff,#6576df 50%,#5634a5);
+  box-shadow: 0 0 65px #718aff55;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.eyebrow {
+  color: #9faeff;
+  letter-spacing: 3px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.hero h1 {
+  font-family: 'Space Grotesk',sans-serif;
+  font-size: clamp(29px,5vw,43px);
+  margin: 15px 0;
+  line-height: 1.2;
+}
+
+.gradient {
+  background: linear-gradient(90deg,#8eb2ff,#c6a2ff);
+  color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 500px;
+  margin: auto;
+  font-size: 14px;
+}
+
+.suggestions {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.suggestion {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 17px;
+  cursor: pointer;
+  text-align: left;
+  color: white;
+  transition: .2s;
+}
+
+.suggestion:hover {
+  border-color: #859cff88;
+  transform: translateY(-2px);
+}
+
+.suggestion .emoji {
+  font-size: 22px;
+}
+
+.suggestion h3 {
+  font-size: 13px;
+  margin: 10px 0 5px;
+}
+
+.suggestion p {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.message {
+  max-width: 85%;
+  padding: 15px 17px;
+  border-radius: 15px;
+  line-height: 1.7;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.user {
+  align-self: flex-end;
+  background: #394b82;
+}
+
+.assistant {
+  align-self: flex-start;
+  background: #19243b;
+  border: 1px solid var(--border);
+}
+
+.chat-box {
+  background: #141d32;
+  border: 1px solid #52669655;
+  border-radius: 17px;
+  padding: 13px;
+}
+
+.chat-box textarea {
+  width: 100%;
+  min-height: 55px;
+  resize: vertical;
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.chat-box textarea::placeholder {
+  color: #78839d;
+}
+
+.chat-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 7px 0;
+}
+
+.hint {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.send-btn {
+  background: linear-gradient(110deg,#668dff,#9c77f9);
+  color: white;
+  border: 0;
+  border-radius: 9px;
+  padding: 10px 18px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* OTHER PAGES */
+
+.page-heading {
+  font-family: 'Space Grotesk',sans-serif;
+  font-size: 30px;
+  margin-bottom: 9px;
+}
+
+.page-description {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 30px;
+  line-height: 1.7;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.feature-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: #283657;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  margin-bottom: 17px;
+}
+
+.feature-card h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.coming {
+  display: inline-block;
+  background: #292342;
+  color: #c2a9ff;
+  font-size: 10px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  margin-top: 17px;
+}
+
+.empty-state {
+  background: var(--panel);
+  border: 1px dashed #55618466;
+  padding: 35px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+.empty-state .big {
+  font-size: 38px;
+  margin-bottom: 14px;
+}
+
+.empty-state h3 {
+  margin-bottom: 9px;
+}
+
+.empty-state p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media(max-width:760px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; padding: 12px; }
+  .brand { padding: 5px 8px 13px; }
+  .nav-label,.sidebar-bottom { display: none; }
+  .nav { flex-direction: row; overflow-x: auto; }
+  .nav button { white-space: nowrap; font-size: 11px; padding: 10px; }
+  .topbar { height: 58px; padding: 0 15px; }
+  .topbar-title { font-size: 13px; }
+  .preview { display: none; }
+  .page { padding: 20px 15px; }
+  .chat-area { margin: 15px auto; }
+  .hero { padding-top: 15px; }
+  .suggestions,.card-grid { grid-template-columns: 1fr; }
+  .message { max-width: 95%; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="orb">✦</div>
+      <div>
+        <div class="brand-name">JERRY</div>
+        <div class="brand-tag">PERSONAL AI SYSTEM</div>
+      </div>
+    </div>
+
+    <div class="nav-label">WORKSPACE</div>
+
+    <nav class="nav">
+      <button class="active" data-page="chat">
+        <span class="nav-icon">◈</span> Chat with Jerry
+      </button>
+
+      <button data-page="apps">
+        <span class="nav-icon">▦</span> Connected Apps
+      </button>
+
+      <button data-page="devices">
+        <span class="nav-icon">▣</span> My Devices
+      </button>
+
+      <button data-page="activity">
+        <span class="nav-icon">◷</span> Activity
+      </button>
+
+      <button data-page="settings">
+        <span class="nav-icon">⚙</span> Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="system-card">
+        <small>JERRY SYSTEM</small>
+        <p><span class="dot"></span>Interface preview</p>
+      </div>
+
+      <div class="profile">
+        <div class="avatar">J</div>
+        <div>
+          <strong style="font-size:13px">Guest user</strong>
+          <br>
+          <small>Preview workspace</small>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div class="topbar-title" id="pageTitle">Chat with Jerry</div>
+
+      <div class="topbar-right">
+        <span class="preview">✦ PREVIEW VERSION</span>
+        <button class="new-chat" id="newChat">+ New chat</button>
+      </div>
+    </header>
+
+    <section class="page active" id="chat">
+
+      <div class="chat-area">
+
+        <div class="hero" id="hero">
+          <div class="hero-orb">✦</div>
+          <div class="eyebrow">YOUR PERSONAL AI ASSISTANT</div>
+
+          <h1>
+            Hello. I'm <span class="gradient">Jerry.</span>
+            <br>
+            What can I do for you?
+          </h1>
+
+          <p>
+            Your digital world, connected through one intelligent
+            assistant. Just explain what you need.
+          </p>
+        </div>
+
+        <div class="suggestions" id="suggestions">
+
+          <button class="suggestion" data-prompt="Help me write a professional email.">
+            <span class="emoji">✉️</span>
+            <h3>Write something</h3>
+            <p>Emails, messages, documents and more.</p>
+          </button>
+
+          <button class="suggestion" data-prompt="Help me research something on the internet.">
+            <span class="emoji">🌐</span>
+            <h3>Research anything</h3>
+            <p>Explore topics and find useful information.</p>
+          </button>
+
+          <button class="suggestion" data-prompt="Help me plan my day.">
+            <span class="emoji">📅</span>
+            <h3>Organize my day</h3>
+            <p>Tasks, schedules and daily planning.</p>
+          </button>
+
+          <button class="suggestion" data-prompt="Help me create something.">
+            <span class="emoji">✨</span>
+            <h3>Create something</h3>
+            <p>Ideas, presentations and creative content.</p>
+          </button>
+
+        </div>
+
+        <div class="conversation" id="conversation"></div>
+
+        <form class="chat-box" id="chatForm">
+          <textarea
+            id="userInput"
+            placeholder="Ask Jerry to do something..."
+            rows="2"
+            required
+          ></textarea>
+
+          <div class="chat-bottom">
+            <span class="hint">JERRY · FIRST VERSION</span>
+            <button type="submit" class="send-btn">Send ↗</button>
+          </div>
+        </form>
+
+      </div>
+    </section>
+
+    <section class="page" id="apps">
+      <h1 class="page-heading">Connected Applications</h1>
+      <p class="page-description">
+        Manage the services you want Jerry to connect to.
+        Real integrations will be added in later stages.
+      </p>
+
+      <div class="card-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">✉️</div>
+          <h3>Gmail</h3>
+          <p>Emails, replies and inbox management.</p>
+          <span class="coming">Not connected</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <h3>Google Calendar</h3>
+          <p>Appointments and scheduling.</p>
+          <span class="coming">Not connected</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">☁️</div>
+          <h3>Google Drive</h3>
+          <p>Search and manage authorized documents.</p>
+          <span class="coming">Not connected</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>More applications</h3>
+          <p>An expandable integration system.</p>
+          <span class="coming">Coming later</span>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="page" id="devices">
+      <h1 class="page-heading">My Devices</h1>
+      <p class="page-description">
+        Manage computers and phones connected to your Jerry account.
+      </p>
+
+      <div class="empty-state">
+        <div class="big">💻</div>
+        <h3>No devices connected yet</h3>
+        <p>The Windows and Android companion applications will be added later.</p>
+      </div>
+    </section>
+
+    <section class="page" id="activity">
+      <h1 class="page-heading">Activity History</h1>
+      <p class="page-description">
+        Review activities performed through Jerry.
+      </p>
+
+      <div class="empty-state">
+        <div class="big">◷</div>
+        <h3>No recorded activity</h3>
+        <p>Activity will appear here after real integrations are added.</p>
+      </div>
+    </section>
+
+    <section class="page" id="settings">
+      <h1 class="page-heading">Settings</h1>
+      <p class="page-description">
+        Manage your Jerry experience.
+      </p>
+
+      <div class="card-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">👤</div>
+          <h3>My Account</h3>
+          <p>Account registration and login.</p>
+          <span class="coming">Coming later</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>Privacy and Permissions</h3>
+          <p>Manage connected accounts and permissions.</p>
+          <span class="coming">Coming later</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const navButtons = document.querySelectorAll("[data-page]");
+const pages = document.querySelectorAll(".page");
+const pageTitle = document.getElementById("pageTitle");
+
+const titles = {
+  chat: "Chat with Jerry",
+  apps: "Connected Applications",
+  devices: "My Devices",
+  activity: "Activity History",
+  settings: "Settings"
+};
+
+navButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const target = button.dataset.page;
+
+    pages.forEach(page => {
+      page.classList.toggle("active", page.id === target);
+    });
+
+    navButtons.forEach(item => {
+      item.classList.toggle("active", item === button);
+    });
+
+    pageTitle.textContent = titles[target];
+  });
+});
+
+const form = document.getElementById("chatForm");
+const input = document.getElementById("userInput");
+const conversation = document.getElementById("conversation");
+const hero = document.getElementById("hero");
+const suggestions = document.getElementById("suggestions");
+
+function addMessage(text, type) {
+  const message = document.createElement("div");
+  message.className = "message " + type;
+  message.textContent = text;
+  conversation.appendChild(message);
+}
+
+function sendMessage(text) {
+  if (!text.trim()) return;
+
+  hero.style.display = "none";
+  suggestions.style.display = "none";
+
+  addMessage(text, "user");
+
+  addMessage(
+    "I've received your instruction! My AI intelligence engine is not connected yet. We'll add real AI capabilities in the next stages.",
+    "assistant"
+  );
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  sendMessage(input.value);
+  input.value = "";
+});
+
+document.querySelectorAll(".suggestion").forEach(button => {
+  button.addEventListener("click", () => {
+    sendMessage(button.dataset.prompt);
+  });
+});
+
+document.getElementById("newChat").addEventListener("click", () => {
+  conversation.innerHTML = "";
+  hero.style.display = "block";
+  suggestions.style.display = "grid";
+  input.value = "";
+});
+
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    form.requestSubmit();
+  }
+});
+</script>
+
+</body>
+</html>
